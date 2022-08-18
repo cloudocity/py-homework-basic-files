@@ -4,7 +4,6 @@ def read_recipes():
     with open('recipes.txt','r', encoding='UTF8') as f:
         cook_book = {}
         for n in f:
-            ingredient = {}
             list_ingr = []
             name = n.strip('\n')
             if name != '':
@@ -19,13 +18,16 @@ def read_recipes():
 def get_shop_list_by_dishes(list_cook,person):
     cook_book = read_recipes()
     cook_dict = {}
-    cook_dict2 = {}
-    for key in cook_book:
-        for cook in list_cook:
-            if key == cook:
-                for ingredient in cook_book[key]:
-                    print(ingredient)
-                    cook_dict[ingredient['ingredient_name']] = {'measure': ingredient['measure'], 'quantity':  ingredient['quantity'] * person}
-    pprint(cook_dict )
+    for cook in list_cook:
+        for ingredient in cook_book[cook]:
+            cook_dict[ingredient['ingredient_name']] = {'measure': ingredient['measure'],
+                                                        'quantity': 0}
+    for cook2 in list_cook:
+        for ingredient in cook_book[cook2]:
+            quantity = cook_dict[ingredient['ingredient_name']]['quantity'] + ingredient['quantity'] * person
+            cook_dict[ingredient['ingredient_name']] = {'measure': ingredient['measure'],
+                                                        'quantity': quantity  }
+    return(cook_dict)
 
-get_shop_list_by_dishes(['Омлет', 'Омлет'], 1)
+
+pprint(get_shop_list_by_dishes(['Запеченный картофель', 'Омлет', 'Фахитос'], 1))
