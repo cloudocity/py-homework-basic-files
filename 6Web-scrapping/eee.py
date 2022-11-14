@@ -1,7 +1,7 @@
 import bs4
 import requests
-
 url ='https://habr.com/ru/all/'
+#url_u ='https://habr.com'
 KEYWORDS = ['DevOps', 'Microsoft', 'python', 'React', 'Java']
 
 HEADERS = {
@@ -18,33 +18,37 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
 }
 
-response = requests.get(url,headers=HEADERS)
+response = requests.get(url, headers=HEADERS)
 text = response.text
 soup = bs4.BeautifulSoup(text, features='html.parser')
 articles = soup.find_all('article')
 for article in articles:
     dict = {}
     datetime = article.find(class_='tm-article-snippet__datetime-published').find('time')
-    datetime = datetime.get('datetime')
+    print(datetime)
+    #datetime = datetime.get('datetime')
     hubs = article.find_all(class_='tm-article-snippet__hubs-item')
     hubs = [hub.text.strip(' *') for hub in hubs]
     title = article.find(class_='tm-article-snippet__title-link').find('span').text
+    #href = article.find(class_='tm-article-snippet__readmore').attrs['href']
+    #full_href = f"{url_u}{href}"
+    #print(full_href)
     for hub in hubs:
         if hub in KEYWORDS:
             dict['title'] = title
-            dict['datetime'] = datetime
+            #dict['datetime'] = datetime
 
     for key in KEYWORDS:
         if key in title:
             dict['title'] = title
-            dict['datetime'] = datetime
+            #dict['datetime'] = datetime
     bodys = article.find_all(class_='tm-article-body tm-article-snippet__lead')
     bodys = [body.text.strip() for body in bodys]
     for keys in KEYWORDS:
         for body in bodys:
             if keys in body:
                 dict['title'] = title
-                dict['datetime'] = datetime
+                #dict['datetime'] = datetime
     if dict:
         print(dict)
 
