@@ -3,7 +3,7 @@ import requests
 
 url ='https://habr.com/ru/all/'
 KEYWORDS = ['DevOps', 'Microsoft', 'python', 'React', 'Java']
-
+url_u ='https://habr.com'
 HEADERS = {
     'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     'Cache-Control': 'max-age=0',
@@ -22,8 +22,11 @@ response = requests.get(url,headers=HEADERS)
 text = response.text
 soup = bs4.BeautifulSoup(text, features='html.parser')
 articles = soup.find_all('article')
+
 for article in articles:
     dict = {}
+    href = article.find(class_='tm-article-snippet__readmore').attrs['href']
+    full_href = f"{url_u}{href}"
     datetime = article.find(class_='tm-article-snippet__datetime-published').find('time')
     datetime = datetime.get('datetime')
     hubs = article.find_all(class_='tm-article-snippet__hubs-item')
@@ -33,11 +36,13 @@ for article in articles:
         if hub in KEYWORDS:
             dict['title'] = title
             dict['datetime'] = datetime
+            dict['url'] = full_href
 
     for key in KEYWORDS:
         if key in title:
             dict['title'] = title
             dict['datetime'] = datetime
+            dict['url'] = full_href
     bodys = article.find_all(class_='tm-article-body tm-article-snippet__lead')
     bodys = [body.text.strip() for body in bodys]
     for keys in KEYWORDS:
@@ -45,9 +50,7 @@ for article in articles:
             if keys in body:
                 dict['title'] = title
                 dict['datetime'] = datetime
-    if dict:
-        print(dict)
+                dict['url'] = full_href
 
-    #print(title)
-        #for post in posts:article-formatted-body article-formatted-body article-formatted-body_version-2
-            #print(post)
+    if dict:
+        print(f"{dict['datetime']} - {dict['title']} - {dict['url']}")
