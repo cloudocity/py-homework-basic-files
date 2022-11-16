@@ -46,6 +46,8 @@ for article in articles:
     bodys = article.find_all(class_='tm-article-body tm-article-snippet__lead')
     bodys = [body.text.strip() for body in bodys]
     for keys in KEYWORDS:
+
+        
         for body in bodys:
             if keys in body:
                 dict['title'] = title
